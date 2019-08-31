@@ -1,0 +1,46 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Drone Phantom 4" ,
+      "image": "drone-phantom-4.jpg" ,
+      "price": 8000.00 ,
+      "description": "O Phantom 4 é um drone da DJI que pemite gravar vídeos em 4K. O aparelho alcança até 5 km de distância e 1,5 Km de altura e é indicado para usos profissionais."
+    },
+    {
+      "id": 2,
+      "name": "Go Pro Hero 7" ,
+      "image": "gopro-hero-7.jpg",
+      "price": 3200.00,
+      "description": "Conheça a GoPro Hero 7, a parceira perfeita para qualquer aventura. É resistente, pequena e totalmente à prova d’água para acompanhar você em qualquer lugar."
+    },
+    {
+      "id": 3,
+      "name": "Iphone XS Max" ,
+      "image": "iphone-xs-max.jpg" ,
+      "price": 7999.00 ,
+      "description": "O Apple iPhone XS Max é um dos smartphones iOS mais avançados e completos que existem em circulação. "
+    },
+    {
+      "id": 4,
+      "name": "Kindle 4 geracao" ,
+      "image": "kindle.jpg" ,
+      "price": 399.00,
+      "description": "Mais leve e mais rápido. Tela sensível ao toque que parece papel, sem reflexo mesmo sob a luz do sol."
+    },
+    {
+      "id": 5,
+      "name": "Playstation 4" ,
+      "image": "playstation-4.jpg",
+      "price": 2742.00,
+      "description": "O sistema PlayStation®4 redefine a jogabilidade com riqueza e envolvimento, além de velocidade e gráficos poderosos."
+    },
+    {
+      "id": 6,
+      "name": "Xbox One" ,
+      "image": "xbox-one.jpg" ,
+      "price": 1589.00,
+      "description": "Os jogos ficam melhores no Xbox One. Jogue mais de 1300 jogos no único console criado para você jogar os melhores jogos do passado, presente e futuro."
+    }
+  ]
+}
