@@ -163,3 +163,92 @@ E :
         </div>
 ```
 
+Na nossa aplicação do carrinho de compras, para começarmos a usar o Redux, temos que ter 3 estruturas primordiais que são:
+- As Actions
+- Os Reducers
+- A store
+
+E assim _consequirmos gerenciar o estado global da nossa aplicação por meio dos componentes_. Criaremos a nossa Action explicitando 
+o que irá acontercer quando chamar-mos tal action . **Lembrando que uma Action representa um objeto que tem um tipo e um payload**. 
+
+Com os reducers, vamos **conseguir falar como os estados vão ser atualizados**. 
+
+O instrutor criou uma pasta para cada uma dessas tres coisas.  Primeiro vamos criar uma Action para adicionar um produto 
+no carrinho de compras. **O meu carrinho de compra será uma Store**. Action:
+```
+export const ADD_TO_CART = 'ADD_TO_CART';
+//Action Creator
+export const addToCart = product => ({
+  type: ADD_TO_CART,
+  product
+});
+```
+Observe que o tal do Payload vai ser o product. A Action Creator, `addTocart` vai ser uma function que vai retornar nossa Action.
+
+Depois vamos criar o Reducer para dizer como vamos atualizar a nossa Store. O instrutor chamou esse Reducer de cart.js. 
+Nesse reducer, primeiro vamos observar qual será meu estado inicial. Qual estado queremos atualizar. Observe o código:
+```
+const initialState = {
+  products: []
+};
+```
+A function cart, que vai ser o reducer, vai receber dois parâmetros, o estado inicial e a action. Observe sua assinatura 
+`export const cart = (state = initialState, action)`
+E dentro dela vamos usar switch case como mostra o código abaixo:
+```
+switch (action.type) {
+    case ADD_TO_CART:
+      if(state.products.find(p => p.id === action.product.id)){
+        return state;
+      }
+      return {
+        ...state,
+        product: state.products.concat(action.product)
+      }
+    default:
+      return state;
+  }
+```
+Dentro desse switch case que vamos de fato atualizar nossa Store. Observe que se to tipo da action for add to card, ele 
+entra e faz uma verificação usando um if, onde se já existir o id do produto, simplesmente vai retornar o state, 
+caso contrário vai adicionar o product na array products. 
+
+Vamos ter uma única Store, **no entando podemos ter vários Reducers**. Mas nessa nossa aplicação vamos usar apenas 1. 
+Caso tenhamos vários Reducers, temos que usar um método do pacote Redux, que se chama, `combineReducers()`. O instrutor usou 
+esse método lá no index.js dentro da pasta reducers. Observe como é ele:
+```
+import {combineReducers} from 'redux'
+import {cart} from "./cart";
+export const Reducers = combineReducers({
+  cart
+});
+```
+Agora passemos à criação da Store, que vai representar nosso carrinho de compras. Lá nela, temos que dizer qual reducer
+estamos usando. Vamos usar o método CreateStore(), e para esse método passamos o Reducer criado. 
+```
+import {createStore} from "redux";
+import {Reducers} from "../reducers";
+
+export const Store = createStore (
+    Reducers /* preLoadeState */,
+    window.__REDUX_DEVTOOLS__EXTENSION__ && window.__REDUX_DEVTOOLS__EXTENSION__()      <--
+
+);
+```
+Lembrar do código que está alí apenas porque queremos que a extensão do Redux do chrome funcione. **Lembrando que não precisamos 
+dessa coisa para o Redux funcionar.**
+
+Finanlmente, precisamos ir lá no App e dizer que o conjunto de componentes que estão lá dentro, tudo que acontecer lá dentro, 
+estará associado com a Store. E para isso vamos usar um componente do React-Redux chamado Provider passando a Store para ele.
+```
+<Provider store={Store}>    <--
+      <div id="main-app">
+        <h1>Amazing Store</h1>
+       <BrowserRouter>
+         <Route exact path="/" component={ProductsList}/>
+         <Route path="/product/:id" component={ProductComponent}/>
+       </BrowserRouter>
+      </div>
+</Provider>                 <--
+```
+
