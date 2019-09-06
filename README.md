@@ -252,3 +252,132 @@ estará associado com a Store. E para isso vamos usar um componente do React-Red
 </Provider>                 <--
 ```
 
+Agora tudo que devemos fazer é uma associação entre componente e action. Simplesmente assim. Vamos ir lá no componente
+ProductComponent, para que ao clicar nos detalhes do produto, vou cair na tela do produto, e nisso vou criar um botão para 
+ao clicar, adicionar o produto no carrinho. Vamos adicionar o produto no nosso Estado Global. E esse estado global vai ser o 
+carrinho de compras. 
+No componente ProductComponent vamos usar a action ADD-TO-CART. E para fazer isso vamos usar o método connect(), do React-Redux,
+assim vamos exportar o componente associado com essas ações. Vamos observe como fica o método. E reparar onde eu coloquei 
+ele:
+```
+export const Product = connect (
+    undefined,
+    {addToCart}
+)(ProductComponent);
+```
+Uma observação interessante. Observar que estou exportando o Product, ai lá no meu App, na rota, vou ter que usar não mais 
+ProductComponent, mas sim Product. Observer: `<Route path="/product/:id" component={Product}/>`
+
+Observe que o método connect recebe dois argumentos, o primeiro indica se desejamos recuperar algo dado para esse componente. 
+Nesse momento não vamos usar ele, por isso declaramos undefined. **O segundo argumento é um object para onde vou passar 
+minhas actions**. A connect vai retornar outra function, onde passamos como argumento qual componente que vamos conectar à essa ação
+e então vai usar as configurações que usarmos. 
+
+Em seguinda o instrutor criou um botão para de fato usar a Action. **E essa action fica disponível como uma propriedade 
+para o meu componente**. Fizemos assim:
+- Puxamos a ação que declaramos
+- Colocamos no botão que quando eu clicarm chama a ação ADD-TO-CART
+`<button onClick={() => this.props.addToCart(this.state.product)}>Add to Cart</button>`
+
+O próximo passo do nosso projeto será a página que vai mostrar quais produtos estão no carrinho de compras. E depois vamos 
+criar um botão para retirar o produto do carrinho. 
+
+Para essa ação **temos que criar uma Action e Reducer**. Lá na pasta view, o instrutor criou o component Cart onde vai 
+ser listado os produtos adicionados. Vamos observar nessa view o seguinte: O nome dela é Cart. A assinatura da classe vai ser 
+essa: `class CartComponent extends Component`. E também lá no export temos a seguinte assinatura: `export const Cart = connect()`.
+Lembrar que é Cart que devemos colocar lá no App, para fazer o roteamento. 
+
+Em relação ao método connect(), visto que ele recebe dois argumentos e a gente já havia utilizado um deles vamos utilizar o 
+outro. Passando **o primeiro argumento para o connect,** vamos _conseguir recuperar os dados da nossa Store para o componente 
+carrinho de compras._ Ele vai ser uma function mapStateToProps(). Isso é porque devemos declarar quais dados vamos trabalhar 
+dentro desse componente, do Cart, que será o nosso carrinho de compras. Portanto no connect() temos que:
+- 1 argumento (Quais dados da Store que vamnos utilizar)
+- 2 argumento (Quais as actions que vamos usar)
+
+Portanto ela vai ficar assim:
+```
+export const Cart = connect(
+    mapStateToProps,
+    {removeFromCart}
+)(CartComponent);
+```
+E esse método mapStateToProps que vai retornar quais os dados vamos querer exibir no componente. 
+```
+const mapStateToProps = ({cart}) => (
+    {
+      products: cart.products
+    }
+);
+```
+E lá no Reducer cart, vamos ter a array de produtos usada ai em cima. Observe que ela será o Estado inicial:
+```
+const initialState = {
+  products: []
+};
+```
+Em seguido o professor o professor criou a action para remover um produto do carrinho de compras. Observe que ele vai ser 
+chamado REMOVE_FROM_CART e ele vai ficar lá no index.js dentro da pasta action:
+```
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART'
+//Action Creator
+export const addToCart = product => ({
+  type: ADD_TO_CART,
+  product
+});
+export const removeFromCart = product => ({     <--
+  type: REMOVE_FROM_CART,
+  product
+});
+```
+Declaramos o tipo e o payload dele. Agora vou ir lá no Reducer, no cart.js na pasta Reducer, e adiciona mais um 
+case na estrutura switch. Mas agora vai ser um para trabalhar a retirada do produto do carrinho de compras:
+```
+case REMOVE_FROM_CART:
+      if(state.products.find(p => p.id === action.product.id)){
+        return {
+          ...state,
+          products: state.products.filter(p=> p.id !== action.product.id)
+        };
+      }
+      return state;
+```
+Observando o if, onde ele vai retornar o primeiro elemento do array (products) casa seja satisfeita a function de teste. 
+Ou seja se tiver uma id fornecido que for igual ao que tá na action, vai retornar um estado modificado. E observe que o método 
+filter vai retornar uma array com todos os elementos que passarem no teste, na function, ou seja o id que for diferente 
+do que foi passado na action.
+
+E então essa action vai ser passada lá no componente do carrinho de compras. 
+
+Agora vamos de fato listas os produtos do carrinho de compras. Agora vamos lá no return() e trabalhar o html 
+```
+<ul>
+            {this.props.products.map(product => (
+                <li>
+                  <img src={require(`../assets/images/${product.image}`)} alt=""/>
+                  <h4>{product.name}</h4>
+                  <span>{product.price}</span>
+                  <button onClick={() => this.props.removeFromCart(product)}>Remove from cart</button>
+                </li>
+            ))}
+          </ul>
+```
+
+E depois o instrutor montou um trecho onde a medida que vamos adicionando produto no carrinho, vai ser acumulado o valor, 
+observe:
+```
+<p>
+<b> Amount:</b> {this.props.products.reduce((acc, current) => acc + current.price, 0 ).toFixed(2)}
+</p>
+```
+
+Em suma o que está acontecendo aqui é o seguinte:
+1. **O usuário clica no botão para adicionar um produto no carrinho de compras**
+2. **É disparado uma Action para adicionar um produto**
+3. **Um reducer recebe a ação com um tipo de um payload**
+4. **O mesmo reducer trata a ação, retornando um objeto modificado que representa o novo estado da aplicação**
+5. **A store agora possui um novo valor, atualizado**
+6. **O component Cart é renderizado novamente com os novos valores da store**
+
+Sempre que o usuário clica no botão para adicionar um produto ao carrinho de compras, é necessário disparar uma ação,
+tratar o tipo da ação pelo reducer e atualizar valor da store. 

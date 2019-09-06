@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {Products} from "../api/Products";
+import {connect} from 'react-redux'
+import {addToCart} from "../actions";
+import {Link} from 'react-router-dom'
 
-export class ProductComponent extends Component {
+class ProductComponent extends Component {
   state ={
     product: {}
   };
@@ -16,12 +19,18 @@ export class ProductComponent extends Component {
             this.state.product.image && <img src={require(`../assets/images/${this.state.product.image}`)} alt=""/>
           }
           <h3>{this.state.product.name}</h3>
-          <span className="product-prive">
+          <span className="product-price">
             <b>Price:</b>
             R${this.state.product.price}
           </span>
           <p>{this.state.product.description}</p>
+          <button onClick={() => this.props.addToCart(this.state.product)}>Add to Cart</button>
+          <p><Link to="/cart">View Cart</Link></p>
         </div>
     );
   }
 }
+export const Product = connect (
+    undefined,
+    {addToCart}
+)(ProductComponent);
